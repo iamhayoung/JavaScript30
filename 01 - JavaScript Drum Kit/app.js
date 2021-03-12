@@ -1,4 +1,17 @@
 const audios = document.querySelectorAll('audio');
+const btns = document.querySelectorAll('.key');
+
+const toggleClass = (num) => {
+  btns.forEach((btn) => {
+    const btnKey = btn.dataset.key;
+
+    if (btnKey === num) {
+      btn.classList.toggle('playing')
+    } else {
+      return;
+    }
+  })
+}
 
 const playSound = (key) => {
   const pressedKey = String(key);
@@ -6,8 +19,9 @@ const playSound = (key) => {
     const audioNum = audio.dataset.key;
 
     if (pressedKey === audioNum) {
+      audio.currentTime = 0;
       audio.play();
-
+      toggleClass(audioNum);
     } else {
       return;
     }
