@@ -1,5 +1,5 @@
 const audios = document.querySelectorAll('audio');
-const btns = document.querySelectorAll('.key');
+const btns = Array.from(document.querySelectorAll('.key'));
 
 const toggleClass = (num) => {
   btns.forEach((btn) => {
