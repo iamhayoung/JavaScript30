@@ -23,10 +23,12 @@ const cities = [];
 
 fetch(endpoint)
   .then(response => {
-    return response.json();
+    return response.json(); // 서버에서 보내준 response를 Object 형태로 변환
   })
   .then(data => {
+    // data는 위에서 object로 변환한 response임
     cities.push(...data) // spread
+    console.log(cities)
   })
   .catch(error => { throw error });
 
@@ -46,6 +48,7 @@ function displayMatches() {
   const matchArray = findMatches(this.value, cities)
   const html = matchArray.map(place => {
     const regex = new RegExp(this.value, 'gi');
+    console.log(regex)
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`)
     const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`)
       return `
@@ -55,6 +58,7 @@ function displayMatches() {
         </li>
       `;
   }).join('');
+  console.log(html)
   suggestions.innerHTML = html;
 }
 

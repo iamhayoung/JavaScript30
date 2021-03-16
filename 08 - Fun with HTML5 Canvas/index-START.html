@@ -3,17 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <title>HTML5 Canvas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
+  <script>
+    const canvas = document.querySelector('#draw');
+    const ctx = canvas.getContext('2d');
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+    let drawing = false;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    let hue = 0;
+    let line = 0;
 
+    const startPath = (event) => {
+      drawing = true;
+      ctx.beginPath() // 경로 생성
+      let x = event.clientX;
+      let y = event.clientY;
+      ctx.moveTo(x, y); // 선을 그리는 시작점 좌표
+    }
+
+    const drawPath = (event) => {
+      if (drawing) {
+        let x = event.clientX;
+        let y = event.clientY;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        };
+        ctx.lineWidth = line;
+        ctx.lineTo(x, y) // 선을 그리는 마지막 지점 좌표
+        ctx.stroke() // moveTo와 lineTo로 경로가 정해진 지점에서 선을 그리는 역할을 수행
+      }
+    }
+
+    const endPath = (event) => {
+      drawing = false;
+    }
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    const init = () =>{
+      resizeCanvas()
+      window.addEventListener('resize', resizeCanvas)
+      canvas.addEventListener('mousedown', startPath)
+      canvas.addEventListener('mousemove', drawPath)
+      canvas.addEventListener('mouseup', endPath)
+    }
+
+    init();
+  </script>
 </body>
 </html>
