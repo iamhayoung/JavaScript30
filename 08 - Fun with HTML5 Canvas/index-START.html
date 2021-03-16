@@ -25,38 +25,43 @@
   <script>
     const canvas = document.querySelector('#draw');
     const ctx = canvas.getContext('2d');
+    ctx.lineWidth = 100;
 
     let drawing = false;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
+    let lastX = 0;
+    let lastY = 0;
     let hue = 0;
-    let line = 0;
+    let direction = true;
 
-    const startPath = (event) => {
-      drawing = true;
-      ctx.beginPath() // 경로 생성
-      let x = event.clientX;
-      let y = event.clientY;
-      ctx.moveTo(x, y); // 선을 그리는 시작점 좌표
-    }
+    function drawPath (event) {
+      if (!drawing) return; // stop the fn from running when they are not moused down
+      console.log(event);
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath(); // 경로 생성
+      ctx.moveTo(lastX, lastY); // 선을 그리는 시작점 좌표
+      ctx.lineTo(event.offsetX, event.offsetY); // 선을 그리는 마지막 지점 좌표
+      ctx.stroke(); // moveTo와 lineTo로 경로가 정해진 지점에서 선을 그리는 역할을 수행
+      [lastX, lastY] = [event.offsetX, event.offsetY];
+      // ↑ destructuring
+      // lastX = event.offsetX;
+      // lastY = event.offsetY;
 
-    const drawPath = (event) => {
-      if (drawing) {
-        let x = event.clientX;
-        let y = event.clientY;
-        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
-        hue++;
-        if (hue >= 360) {
-          hue = 0;
-        };
-        ctx.lineWidth = line;
-        ctx.lineTo(x, y) // 선을 그리는 마지막 지점 좌표
-        ctx.stroke() // moveTo와 lineTo로 경로가 정해진 지점에서 선을 그리는 역할을 수행
+      hue++;
+      if (hue >= 360) {
+        hue = 0;
+      };
+
+      if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+        direction = !direction;
       }
-    }
 
-    const endPath = (event) => {
-      drawing = false;
+      if (direction) {
+        ctx.lineWidth++;
+      } else {
+        ctx.lineWidth--;
+      }
     }
 
     const resizeCanvas = () => {
@@ -67,9 +72,13 @@
     const init = () =>{
       resizeCanvas()
       window.addEventListener('resize', resizeCanvas)
-      canvas.addEventListener('mousedown', startPath)
+      canvas.addEventListener('mousedown', (event) => {
+        drawing = true;
+        [lastX, lastY] = [event.offsetX, event.offsetY]
+      });
       canvas.addEventListener('mousemove', drawPath)
-      canvas.addEventListener('mouseup', endPath)
+      canvas.addEventListener('mouseup', () => drawing = false);
+      canvas.addEventListener('mouseout', () => drawing = false);
     }
 
     init();
